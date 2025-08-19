@@ -13,7 +13,7 @@ env:
 
 jobs:
   build-and-deploy:
-    name: uild and Deploy Python Function
+    name: Build and Deploy Python Function
     runs-on: ubuntu-latest
     environment: dev
 
@@ -29,7 +29,7 @@ jobs:
       - name: Create and start virtual environment
         run: |
           python -m venv venv
-          source .venv/bin/activate
+          source venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
