@@ -1,5 +1,5 @@
 name: Build and deploy Python project to Azure Function App - oktatest-func
-
+# test
 on:
   push:
     branches:
