@@ -37,9 +37,6 @@ jobs:
 
       # Optional: Add step to run tests here
 
-      - name: Zip artifact for deployment
-        run: zip -r release.zip . -x ".venv/*" -x ".git/*" -x ".github/*" -x "local.settings.json" -x "*.pyc" -x "__pycache__/*"
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
