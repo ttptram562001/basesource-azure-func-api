@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - develop
-  workflow_dispatch:
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'oktatest-func'
@@ -23,19 +22,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # - name: Setup Python version
-      #   uses: actions/setup-python@v5
-      #   with:
-      #     python-version: ${{ env.PYTHON_VERSION }}
+      - name: Setup Python version
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      # - name: Create and start virtual environment
-      #   run: |
-      #     python -m venv venv
-      #     source venv/bin/activate
-      #     python -m pip install --upgrade pip
-      #     pip install -r requirements.txt
+      - name: Create and start virtual environment
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
       # Optional: Add step to run tests here
+
+      - name: Install Azure Functions Core Tools
+        run: |
+          npm install -g azure-functions-core-tools@4 --unsafe-perm true
+          func --version
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -49,7 +53,6 @@ jobs:
         id: deploy-to-function
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-          slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           sku: flexconsumption
           remote-build: true
