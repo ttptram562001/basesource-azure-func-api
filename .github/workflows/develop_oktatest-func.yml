@@ -40,7 +40,7 @@ jobs:
       # Optional: Add step to run tests here
 
       - name: Zip artifact for deployment
-        run: run: zip -r release.zip .
+        run: zip -r release.zip .
 
       - name: Verify zip contents
         run: zip -l release.zip
