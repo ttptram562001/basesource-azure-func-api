@@ -11,4 +11,4 @@ app: FastAPI = create_fastapi(route)
 
 @app.get("/")
 def health_check():
-    return response_success("Health check is ok")
+    return response_success("Health check is good")
