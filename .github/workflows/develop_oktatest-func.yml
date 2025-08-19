@@ -40,10 +40,7 @@ jobs:
       # Optional: Add step to run tests here
 
       - name: Zip artifact for deployment
-        uses: montudor/action-zip@v1
-        with:
-          src: '.'
-          dest: release.zip
+        run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
