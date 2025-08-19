@@ -15,7 +15,6 @@ jobs:
   build-and-deploy:
     name: Build and Deploy Python Function
     runs-on: ubuntu-latest
-    environment: dev
     permissions:
       id-token: write
       contents: read
@@ -53,4 +52,5 @@ jobs:
         id: deploy-to-function
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          slot-name: 'Production'
           package: 'release.zip'
