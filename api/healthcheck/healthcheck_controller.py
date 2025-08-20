@@ -10,6 +10,5 @@ healthcheck_app = FastAPI(root_path=healthcheck_route)
 
 
 @healthcheck_app.get("/")
-def health_check():
-    
+def health_check():    
     return response_success("Health check is good")
