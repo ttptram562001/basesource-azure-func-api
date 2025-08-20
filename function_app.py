@@ -14,9 +14,9 @@ def register_api(
     route_prefix: str,
     auth_level: func.AuthLevel = func.AuthLevel.ANONYMOUS,
 ):
-    """Register fastapi api to Azure functions"""
+    """Register FastAPI app to Azure Functions"""
 
-    @app.function_name(func_name)
+    @app.function_name(name=func_name)
     @app.route(
         route=route_prefix + "/{*route}",
         auth_level=auth_level,
@@ -29,9 +29,9 @@ def register_api(
             func.HttpMethod.OPTIONS,
         ],
     )
-    async def _(req: func.HttpRequest, context: func.Context) -> func.HttpResponse:
+    async def main(req: func.HttpRequest, context: func.Context) -> func.HttpResponse:
         return await func.AsgiMiddleware(fast_app).handle_async(req, context)
 
 
-# Register api
+# Register APIs
 register_api(healthcheck_app, "healthcheck", healthcheck_route)
