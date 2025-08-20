@@ -9,7 +9,7 @@ on:
 env:
   AZURE_FUNCTIONAPP_NAME: 'oktatest-func'
   PYTHON_VERSION: '3.10'
-  PACKAGE_NAME: 'function_app.zip'
+  PACKAGE_NAME: '.'
 
 
 jobs:
