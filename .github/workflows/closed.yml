@@ -6,6 +6,12 @@ on:
     branches:
       - develop 
 
+env:
+  AZURE_FUNCTIONAPP_NAME: 'oktatest-func'
+  PYTHON_VERSION: '3.10'
+  PACKAGE_NAME: 'function_app.zip'
+
+
 jobs:
   deploy:
     if: github.event.pull_request.merged == true   # chỉ chạy khi merge, không chạy khi chỉ closed
@@ -20,28 +26,38 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install dependencies
+      # Bước 1: Build một gói ứng dụng hoàn chỉnh, tự chứa
+      - name: Resolve dependencies and build package
         run: |
-          python -m venv .venv
-          source .venv/bin/activate
+          echo "Starting build process..."
           pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run tests before deploy
+          # Tạo thư mục tạm để chứa tất cả file
+          mkdir -p ./.azure/pack
+          echo "Installing dependencies into ./.azure/pack..."
+          # Cài đặt TẤT CẢ các thư viện VÀO BÊN TRONG thư mục đó
+          pip install --target="./.azure/pack" -r requirements.txt
+          echo "Copying application code..."
+          # Sao chép TOÀN BỘ code ứng dụng vào cùng thư mục đó
+          # rsync tốt hơn cp vì nó cho phép loại trừ
+          rsync -av --progress . ./.azure/pack --exclude ".venv" --exclude ".git*" --exclude ".azure" --exclude ".vscode"
+          echo "Build process completed."
+      
+      # Bước 2: Nén thư mục đã build thành file zip
+      - name: Archive package
         run: |
-          source .venv/bin/activate
-          pytest -v
-
-      - name: Install Azure Functions Core Tools
-        run: |
-          npm install -g azure-functions-core-tools@4 --unsafe-perm true
-          func --version
+          echo "Archiving the package..."
+          cd ./.azure/pack
+          zip -r ../../${{ env.PACKAGE_NAME }} .
+          cd ../..
+          echo "Package archived successfully at ${{ env.PACKAGE_NAME }}"
 
       - name: Deploy to Azure Function App
         uses: azure/functions-action@v1
         with:
-          app-name: oktatest-func
-          package: .
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: ${{ env.PACKAGE_NAME }}
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
           sku: flexconsumption
-          remote-build: true
+          remote-build: false
+          scm-do-build-during-deployment: false
+          enable-oryx-build: false
